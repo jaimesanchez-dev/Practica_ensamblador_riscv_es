@@ -162,3 +162,5 @@ La aproximación mejora al aumentar `N`, como cabía esperar de una suma de Riem
 - Ana Díaz Jiménez
 
 Práctica 1 · Introducción al lenguaje ensamblador · Ingeniería Informática, UC3M.
+
+Readme hecho con Claude
