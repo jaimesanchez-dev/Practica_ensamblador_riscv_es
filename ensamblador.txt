@@ -1,0 +1,149 @@
+.data
+ Matriz: .word 
+ 1,2,3,4,
+ 1,2,3,4, 
+ 1,2,3,4, 
+ 1,2,3,4,  # valores a definir para la matriz
+ M: .word 4 # número de filas y columnas
+.text
+main:
+addi sp, sp, -12
+sw ra, 0(sp)
+sw s0, 4(sp)
+sw s1, 8(sp)
+la a0, Matriz
+la a1, M
+lw a1, 0(a1)
+# se ejecuta la función una primera vez
+rdcycle s0
+ jal ra, RellenarMatriz
+ rdcycle s1
+ sub s1, s1, s0
+# Aquí se debe imprimir el número de ciclos (s1)
+ mv a0, s1
+ li a7, 1
+ ecall #imprimir
+
+la a0, Matriz
+la a1, M
+lw a1, 0(a1)
+# se ejecuta la función una segunda vez
+rdcycle s0
+ jal ra, RellenarMatriz
+ rdcycle s1
+ sub s1, s1, s0
+# Aquí se debe imprimir el número de ciclos (s1)
+ mv a0, s1
+ li a7, 1
+ ecall #imprimir
+
+lw ra, 0(sp)
+lw s0, 4(sp)
+lw s1, 8(sp)
+addi sp, sp, 12
+jr ra
+
+
+
+sumar:
+    #Función int sumar(int a, int b).
+    # 2a + b
+    #t0 = a
+    #t1=b
+    
+    mv t1, a1
+    li t2, 2
+    mul a0, a0, t2 #2a
+    add a0, a0, t1
+    
+    jr ra
+  
+RellenarMatriz:
+
+	addi sp, sp, -4
+    sw ra, 0(sp)
+	#a1 numero de filas o columnas
+    #a0 Matriz
+    mv t0, a0
+    mv t1, a1
+    #t0 Matriz
+    #t1 numero de filas o columnas
+    li t2, 0 #a filas
+    li t3, 0 #b columnas (se suma 1 cuando a=nelmentos(a1))
+    
+	inicio:    
+    beq t3, t1, fin2 #t3==t1
+    
+    bgt t2, t3, a_mayor_b #si a > b
+    
+    ble t2, t3, a_menorigual_b #si a <= b
+    
+    a_mayor_b:
+    mv a0, t2 #a0 = a
+    mv a1, t3 #a1 = b
+    
+    sw t0, -4(sp)
+    
+    sw t1, -8(sp)
+    
+    sw t2, -12(sp)
+
+    sw t3, -16(sp)
+    
+    jal ra, sumar #Devuelve en a0 la suma sumar(a,b) 
+        
+    lw t3, -16(sp)
+    
+    lw t2, -12(sp)
+    
+    lw t1, -8(sp)
+    
+    lw t0, -4(sp)
+    
+    j fin
+    
+    a_menorigual_b:
+    mv a0, t3 #a0 = b
+    mv a1, t2 #a1 = a
+    
+    sw t0, -4(sp)
+    
+    sw t1, -8(sp)
+    
+    sw t2, -12(sp)
+
+    sw t3, -16(sp)
+    jal ra, sumar # Devulve en a0 la suma de sumar(b,a)
+    
+    lw t3, -16(sp)
+    
+    lw t2, -12(sp)
+    
+    lw t1, -8(sp)
+    
+    lw t0, -4(sp)
+    
+    j fin
+    
+    fin:
+    	sw a0, 0(t0)
+        addi t0, t0, 4 # Guardamos el valor suma en la matriz en la matriz y actualizamos       
+        
+        addi t2, t2, 1 # actualizamos el valor de a
+        rem t2, t2, t1 # Si "a" llega a valer el numero de filas, lo reseteamos a "0"
+        beq t2, x0, sumar_1_b
+        j inicio
+        sumar_1_b:
+        	addi t3, t3, 1
+            j inicio
+            
+        
+    
+    fin2:
+    	lw ra, 0(sp)
+        addi sp, sp, 4
+       
+    	jr ra
+    
+    
+    
